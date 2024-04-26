@@ -3,6 +3,10 @@ const express = require("express");
 const cors = require("cors");
 
 
+//all routers
+const {authRoute} = require("./routes/Auth.route")
+
+
 
 
 const app = express()
@@ -21,6 +25,9 @@ app.use(cors(
             Credential:true 
     }
 ))
+
+
+app.use("/api/v1/study-notion",authRoute)
 
 
 module.exports = {app}

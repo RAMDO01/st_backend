@@ -1,22 +1,27 @@
 const jwt = require("jsonwebtoken")
 const {ApiError} = require("../utils/ApiError")
 const {asyncHandler} = require("../utils/asyncHandler")
-const {User} = require("../models/User.model")
+const User = require("../models/User.model")
 
 
 //auth middler ware
 const auth = asyncHandler(async(req, res, next) => {
-    try {
-        const token = req.body.token || req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
+
+        const token = req.body.accessToken
+                      || req.cookies?.accessToken
+                      || req.header("Authorisation")?.replace("Bearer ", "")
 
         if(!token) {
             throw new ApiError(401,"Unauthrized request")
         }
-
+        console.log("token ",token)
+    try {
+        console.log("start verify");
         const decode = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
-
+        console.log("start sucess");
         const user = await User.findById(decode?._id).select("-password -refreshToken")
 
+        console.log(user);
         if(!user) {
             throw new ApiError(401, "invalid access token requrest")
         }
